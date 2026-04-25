@@ -88,6 +88,6 @@ Download the new .apk and install it on your phone (it will safely update over t
 (Note: There is an advanced Expo feature called "EAS Update" that lets you push small code updates over the air without downloading a new APK, but for right now, just building a fresh APK is the standard, foolproof way to test your changes!)
 EAS Update
 
-
+ "expo-firebase-recaptcha": "^2.3.1",
 
 eas build -p android --profile preview
