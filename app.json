@@ -1,3 +1,57 @@
+// {
+//   "expo": {
+//     "name": "Roamly",
+//     "slug": "Roamly",
+//     "version": "1.0.0",
+//     "orientation": "portrait",
+//     "scheme": "myapp",
+//     "userInterfaceStyle": "automatic",
+//     "newArchEnabled": false,
+//     "jsEngine": "jsc",
+//     "ios": {
+//       "supportsTablet": true,
+//       "bundleIdentifier": "com.tanishgupta.roamly"
+//     },
+//     "android": {
+//       "package": "com.tanishgupta.roamly",
+//       "adaptiveIcon": {
+//         "foregroundImage": "./assets/images/travel.jpg",
+//         "backgroundColor": "#ffffff"
+//       }
+//     },
+//     "web": {
+//       "bundler": "metro",
+//       "output": "static",
+//       "favicon": "./assets/images/travel.jpg"
+//     },
+//     "plugins": [
+//       "expo-router",
+//       [
+//         "expo-splash-screen",
+//         {
+//           "image": "./assets/images/travel.jpg",
+//           "imageWidth": 200,
+//           "resizeMode": "contain",
+//           "backgroundColor": "#ffffff"
+//         }
+//       ]
+//     ],
+//     "experiments": {
+//       "typedRoutes": true,
+//       "reactNativeBridge": true
+//     },
+//     "extra": {
+//       "router": {},
+//       "eas": {
+//         "projectId": "e61a1eb4-5c63-433a-864d-63d93bcbf10e"
+//       }
+//     },
+//     "owner": "tanish1311"
+//   }
+// }
+
+
+
 {
   "expo": {
     "name": "Roamly",
@@ -9,34 +63,29 @@
     "newArchEnabled": false,
     "jsEngine": "jsc",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tanishgupta.roamly"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+      "package": "com.tanishgupta.roamly"
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "output": "static"
     },
     "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ]
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactNativeBridge": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "e61a1eb4-5c63-433a-864d-63d93bcbf10e"
+      }
+    },
+    "owner": "tanish1311"
   }
 }

@@ -73,3 +73,21 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+
+Your workflow for changes will look like this:
+
+Write new code and save your files.
+
+Run eas build -p android --profile preview again.
+
+Wait for Expo to create the new .apk.
+
+Download the new .apk and install it on your phone (it will safely update over the old version without deleting your app data).
+
+(Note: There is an advanced Expo feature called "EAS Update" that lets you push small code updates over the air without downloading a new APK, but for right now, just building a fresh APK is the standard, foolproof way to test your changes!)
+EAS Update
+
+
+
+eas build -p android --profile preview
