@@ -176,7 +176,7 @@ import { auth } from '../../../configs/FirebaseConfig';
 import LottieView from 'lottie-react-native';
 
 // 1. IMPORT THE RECAPTCHA COMPONENT
-import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
+// import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SLIDER_WIDTH = SCREEN_WIDTH - 50; 
