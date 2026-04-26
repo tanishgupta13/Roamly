@@ -315,7 +315,7 @@ export default function SignIn() {
         keyboardShouldPersistTaps="handled"
       >
         
-      <TouchableOpacity onPress={() => router.back()}>
+      <TouchableOpacity onPress={() => router.back()} style={{ marginTop: '-10%' }}>
         <Ionicons name="arrow-back" size={24} color="black" />
       </TouchableOpacity>
       
@@ -423,7 +423,7 @@ export default function SignIn() {
 
 const styles = StyleSheet.create({
   container: { padding: 25, paddingTop: 40, backgroundColor: Colors.WHITE, flexGrow: 1 },
-  headerTitle: { fontFamily: 'poppins-semi', fontSize: 30, marginTop: 20 },
+  headerTitle: { fontFamily: 'poppins-semi', fontSize: 30, marginTop: -5 },
   subTitle: { fontFamily: 'poppins-semi', fontSize: 24, color: Colors.GRAY, marginTop: 10 },
   smallSubTitle: { fontFamily: 'poppins-semi', fontSize: 16, color: Colors.GRAY, marginTop: 5 },
 

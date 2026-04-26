@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native'
 import React from 'react'
 import { Colors } from '../constants/Colors'
 import { useRouter } from 'expo-router'
@@ -9,7 +9,7 @@ export default function Login() {
   return (
     // 1. Give the outer wrapper flex: 1 so it knows exactly how big the screen is
     <View style={{ flex: 1, backgroundColor: Colors.WHITE }}>
-      
+      <ScrollView>  
       <Image 
         source={require('./../assets/images/Login.png')}
         style={{
@@ -23,7 +23,6 @@ export default function Login() {
           fontSize: 20,
           fontFamily: 'poppins-semi',
           textAlign: 'center',
-          marginTop: 10,
           lineHeight: 30, // FIX: Prevents top/bottom of custom font from getting cut off
         }}>
           Roamly - Plan Your Next Journey
@@ -59,12 +58,14 @@ export default function Login() {
             color: Colors.WHITE,
             textAlign: 'center',
             fontFamily: 'poppins-light',
+            marginbottom: -2, // FIX: Vertically centers the text better within the button
             fontSize: 18,
           }}>
             Get Started
           </Text>
         </TouchableOpacity>
       </View>
+      </ScrollView>
     </View>
   )
 }
@@ -82,6 +83,6 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: Colors.PRIMARY,
     borderRadius: 99,
-    marginTop: '20%',
+    marginTop: '15%',
   }
 })
