@@ -30,15 +30,26 @@ export default function Login() {
         </Text>
         
         <Text style={{
-          fontFamily: 'poppins',
-          fontSize: 17,
-          textAlign: 'center',
-          color: Colors.GRAY,
-          marginTop: 20,
-          lineHeight: 26, // FIX: Gives the paragraph breathing room so tails of letters aren't cut
-        }}>
-          Discover your next adventure effortlessly. Some text for the roamly application
-        </Text>
+  fontFamily: 'poppins',
+  fontSize: 15,
+  textAlign: 'center',
+  color: Colors.GRAY,
+  marginTop: 20,
+  lineHeight: 28, // Slightly increased for the nested bold text
+}}>
+  <Text style={{ fontFamily: 'poppins-semi', color: '#1a1a2e' }}>Discover it. </Text>
+  Find your next adventure effortlessly.{'\n'}
+  
+  <Text style={{ fontFamily: 'poppins-semi', color: '#1a1a2e'  }}>Plan it. </Text>
+  Craft your personalized itinerary instantly.{'\n'}
+  
+  <Text style={{ fontFamily: 'poppins-semi', color: '#1a1a2e' }}>Roam it. </Text>
+  Pack your bags, the world is waiting.{'\n\n'}
+  
+  <Text style={{ fontFamily: 'poppins-semi', color: '#1a1a2e' }}>
+    Make every journey unforgettable!
+  </Text>
+</Text>
 
         <TouchableOpacity 
           style={styles.button} 

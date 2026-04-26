@@ -360,7 +360,7 @@ const OnCreateAccount = async () => {
         firebaseConfig={auth.app.options}
       /> */}
 
-      <TouchableOpacity onPress={() => router.back()}>
+      <TouchableOpacity onPress={() => router.back()} >
         <Ionicons name="arrow-back" size={24} color="black" />
       </TouchableOpacity>
       
