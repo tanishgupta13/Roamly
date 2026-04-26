@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   View, Text, Image, TouchableOpacity, StyleSheet,
   ActivityIndicator, ScrollView, Animated, Dimensions,
@@ -7,12 +7,13 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { auth, db } from "../../configs/FirebaseConfig";
 import { onAuthStateChanged, signOut, updateProfile } from "firebase/auth";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, deleteDoc } from "firebase/firestore";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { Colors } from '../../constants/Colors';
+import { getAuth } from "firebase/auth";
 
 const { width } = Dimensions.get("window");
 const SAVED_PLACES_KEY = 'roamly_saved_places';
@@ -133,12 +134,26 @@ export default function Profile() {
     offlineMaps:   false,
   });
 
+ 
   const fadeAnim  = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const scrollY   = useRef(new Animated.Value(0)).current;
 
   // ── Load AsyncStorage prefs ───────────────────────────────────────────────
-  useEffect(() => {
+ // Runs every time the tab comes into focus
+
+  const fetchTripCount = useCallback(async (email) => {
+  if (!email) return;
+  try {
+    const q = query(collection(db, "UserTrips"), where("userEmail", "==", email));
+    const snap = await getDocs(q);
+    setTripCount(snap.size);
+  } catch (e) { console.warn("Could not fetch trip count:", e); }
+}, []);
+
+
+useFocusEffect(
+  React.useCallback(() => {
     (async () => {
       try {
         const [av, cu, la, no, dm, om, sp] = await Promise.all([
@@ -153,31 +168,60 @@ export default function Profile() {
         if (av) setSelectedAvatar(JSON.parse(av));
         if (cu) setSelectedCurrency(JSON.parse(cu));
         if (la) setSelectedLanguage(JSON.parse(la));
-        if (sp) setSavedPlaces(JSON.parse(sp));
+        if (sp) {
+          const parsed = JSON.parse(sp);
+          setSavedPlaces(parsed);
+          setSavedIds(new Set(parsed.map(p => p.id)));
+        } else {
+          setSavedPlaces([]);
+          setSavedIds(new Set());
+        }
         setPrefs({
           notifications: no !== null ? JSON.parse(no) : true,
           darkMode:      dm !== null ? JSON.parse(dm) : false,
           offlineMaps:   om !== null ? JSON.parse(om) : false,
         });
       } catch (e) { console.warn("AsyncStorage load error:", e); }
-    })();
-  }, []);
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (u) => {
-      setUser(u);
-      setEditName(u?.displayName || "");
-      if (u) {
-        try {
-          const q = query(collection(db, "UserTrips"), where("userEmail", "==", u.email));
-          const snap = await getDocs(q);
-          setTripCount(snap.size);
-        } catch (e) { console.warn("Could not fetch trip count:", e); }
+      // Re-fetch trip count every time tab is focused
+      if (auth.currentUser?.email) {
+        fetchTripCount(auth.currentUser.email);
       }
-      setLoading(false);
-    });
-    return unsub;
-  }, []);
+    })();
+  }, [fetchTripCount])
+);
+
+
+
+ useEffect(() => {
+  const unsub = onAuthStateChanged(auth, async (u) => {
+    setUser(u);
+    setEditName(u?.displayName || "");
+    if (u) {
+      try {
+        // Fetch trip count
+        const q = query(collection(db, "UserTrips"), where("userEmail", "==", u.email));
+        const snap = await getDocs(q);
+        setTripCount(snap.size);
+      } catch (e) { console.warn("Could not fetch trip count:", e); }
+
+     try {
+  // Pull saved places from Firestore and sync to AsyncStorage
+  const savedSnap = await getDocs(collection(db, "users", u.uid, "savedPlaces"));
+  const firestorePlaces = savedSnap.docs.map(d => d.data());
+  if (firestorePlaces.length > 0) {
+    setSavedPlaces(firestorePlaces);
+    await AsyncStorage.setItem(SAVED_PLACES_KEY, JSON.stringify(firestorePlaces));
+  }
+} catch (e) { console.warn("Could not sync saved places from Firestore:", e); }
+    } else {
+      // User logged out — clear saved places
+      setSavedPlaces([]);
+    }
+    setLoading(false);
+  });
+  return unsub;
+}, []);
 
   useEffect(() => {
     if (!loading) {
@@ -602,31 +646,50 @@ export default function Profile() {
                 columnWrapperStyle={{ gap: 12 }}
                 contentContainerStyle={{ padding: 16, paddingBottom: 40, gap: 12 }}
                 showsVerticalScrollIndicator={false}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.savedCard}
-                    activeOpacity={0.88}
-                    onPress={() => {
-                      setSavedTripsVisible(false);
-                      router.push({ pathname: '/TripDetails', params: { tripData: JSON.stringify(item) } });
-                    }}
-                  >
-                    <Image source={{ uri: item.image }} style={styles.savedCardImage} />
-                    {item.rating ? (
-                      <View style={styles.savedRatingBadge}>
-                        <Ionicons name="star" size={9} color="#FCD34D" />
-                        <Text style={styles.savedRatingText}>{item.rating.toFixed(1)}</Text>
-                      </View>
-                    ) : null}
-                    <View style={styles.savedCardInfo}>
-                      <Text style={styles.savedCardTitle} numberOfLines={1}>{item.title}</Text>
-                      <View style={styles.savedCardRow}>
-                        <Ionicons name="location-outline" size={11} color={C.primary} />
-                        <Text style={styles.savedCardLocation} numberOfLines={1}>{item.location}</Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                )}
+               renderItem={({ item }) => (
+  <TouchableOpacity
+    style={styles.savedCard}
+    activeOpacity={0.88}
+    onPress={() => {
+      setSavedTripsVisible(false);
+      router.push({ pathname: '/TripDetails', params: { tripData: JSON.stringify(item) } });
+    }}
+  >
+    <Image source={{ uri: item.image }} style={styles.savedCardImage} />
+    {item.rating ? (
+      <View style={styles.savedRatingBadge}>
+        <Ionicons name="star" size={9} color="#FCD34D" />
+        <Text style={styles.savedRatingText}>{item.rating.toFixed(1)}</Text>
+      </View>
+    ) : null}
+    {/* Unsave button */}
+    <TouchableOpacity
+      style={styles.unsaveBtn}
+     onPress={async () => {
+  const updated = savedPlaces.filter(p => p.id !== item.id);
+  setSavedPlaces(updated);  // updates modal instantly
+  // Also sync savedIds so the count badge updates immediately
+  setSavedIds && setSavedIds(new Set(updated.map(p => p.id)));
+  try {
+    await AsyncStorage.setItem(SAVED_PLACES_KEY, JSON.stringify(updated));
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      await deleteDoc(doc(db, "users", currentUser.uid, "savedPlaces", item.id));
+    }
+  } catch (e) { console.warn("Unsave error:", e); }
+}}
+    >
+      <Ionicons name="heart-dislike" size={14} color="#fff" />
+    </TouchableOpacity>
+    <View style={styles.savedCardInfo}>
+      <Text style={styles.savedCardTitle} numberOfLines={1}>{item.title}</Text>
+      <View style={styles.savedCardRow}>
+        <Ionicons name="location-outline" size={11} color={C.primary} />
+        <Text style={styles.savedCardLocation} numberOfLines={1}>{item.location}</Text>
+      </View>
+    </View>
+  </TouchableOpacity>
+)}
               />
             )}
           </View>
@@ -915,6 +978,14 @@ const styles = StyleSheet.create({
   savedCardTitle:    { fontFamily: "poppins-semi", fontSize: 12, color: C.textMain, marginBottom: 3 },
   savedCardRow:      { flexDirection: "row", alignItems: "center", gap: 3 },
   savedCardLocation: { fontFamily: "poppins", fontSize: 10, color: C.textSub, flex: 1 },
+unsaveBtn: {
+  position: "absolute",
+  top: 8,
+  right: 8,
+  backgroundColor: "rgba(224,52,52,0.85)",
+  padding: 6,
+  borderRadius: 20,
+},
 
   // Avatar picker
   avatarModalSheet: { paddingBottom: 24, maxHeight: "72%" },

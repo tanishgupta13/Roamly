@@ -113,7 +113,7 @@ export default function TripDetailsIndex() {
           <View style={styles.aiGenBox}>
             <Ionicons name="sparkles" size={50} color={Colors.PRIMARY} />
             <Text style={styles.aiTitle}>Generate Your Trip</Text>
-            <Text style={styles.aiSub}>Gemini will create a unique flight, hotel, and daily plan for this spot.</Text>
+            <Text style={styles.aiSub}>Roamly will create a unique flight, hotel, and daily plan for this spot.</Text>
             <TouchableOpacity style={styles.aiButton} onPress={generateAiPlan} disabled={loading}>
               {loading ? <ActivityIndicator color={Colors.WHITE} /> : (
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import {
   View, Text, StyleSheet, FlatList, Image, TouchableOpacity,
   ActivityIndicator, TextInput, Animated, Easing, ScrollView,
@@ -408,7 +408,8 @@ export default function DiscoverScreen() {
   const isSelecting       = useRef(false);
 
   // ── Load saved from AsyncStorage ─────────────────────────────────────────
-  useEffect(() => {
+ useFocusEffect(
+  useCallback(() => {
     (async () => {
       try {
         const existing = await AsyncStorage.getItem(SAVED_PLACES_KEY);
@@ -416,12 +417,16 @@ export default function DiscoverScreen() {
           const parsed = JSON.parse(existing);
           setSavedPlaces(parsed);
           setSavedIds(new Set(parsed.map(p => p.id)));
+        } else {
+          setSavedPlaces([]);
+          setSavedIds(new Set());
         }
       } catch (e) {
         console.warn('Load saved places error:', e);
       }
     })();
-  }, []);
+  }, [])
+);
 
   // ── Banner rotate ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -800,7 +805,7 @@ const styles = StyleSheet.create({
   loadingTitle:    { fontFamily: 'poppins-semi', fontSize: 20, color: '#1a1a2e', textAlign: 'center', marginBottom: 6 },
   loadingSubtitle: { fontFamily: 'poppins', fontSize: 13, color: '#9CA3AF', textAlign: 'center' },
 
-  header:         { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 18, paddingTop: 52, paddingBottom: 12, backgroundColor: '#F4F6FB' },
+  header:         { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 18, paddingTop: 12, paddingBottom: 12, backgroundColor: '#F4F6FB' },
   headerSub:      { fontFamily: 'poppins', fontSize: 12, color: '#9CA3AF' },
   headerTitle:    { fontFamily: 'poppins-semi', fontSize: 24, color: '#1a1a2e' },
   savedBadge:     { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: '#FEF2F2', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
