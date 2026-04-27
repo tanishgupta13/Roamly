@@ -9,14 +9,8 @@
       "distribution": "internal"
     },
     "preview": {
-      
       "android": {
         "buildType": "apk"
-      },
-      "env": {
-        "EXPO_PUBLIC_GOOGLE_MAP_KEY": "AIzaSyDqZdRXa8HP1g5AvOdN93pyW_2dxw4-Z_Y",
-        "EXPO_PUBLIC_UNSPLASH_ACCESS_KEY": "WiFQHzcFI-BXatOMQJLrBCuKVZ9tkN7QtEFOcTY5REk",
-        "EXPO_PUBLIC_GEMINI_KEY": "AIzaSyDQagXYWENwmBaCK4pKmxgRD4gZ_Vpn5qo"
       },
       "distribution": "internal"
     },
